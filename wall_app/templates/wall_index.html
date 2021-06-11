@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>The Wall</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/wall_style.css' %}">
+    <!-- <link rel="stylesheet" href="../static/css/wall_style.css" -->
+</head>
+
+<body>
+    <div id="wrapper">
+        <div id="header">
+            <h2>CodingDojo Wall</h2>
+            <p> Welcome {{ logged_user.first_name }}</p>
+            <a href="/logout">log out</a>
+        </div>      <!--end header-->
+        <div id="errors">
+            {% if messages %}
+            <ul>    
+                {% for message in messages %}    
+                    <li>{{ message }}</li>    
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>      <!--end errors-->
+        <div id="msg_form">
+            <form action="/wall/add_msg" method="POST">
+                {% csrf_token %}
+                <p>Post a message</p>
+                <textarea name = "msg_content" required></textarea>
+                <button type="submit">Post a message</button>
+            </form>
+        </div>      <!--end msg_form-->
+        <div id="msgs">
+            {% for message in all_msgs %}
+            <p id="msg_head">{{message.msg_poster.first_name}} {{message.msg_poster.last_name}} - {{message.created_at}}</p>
+            <p id="msg_body">{{message.msg_content}}</p>
+
+            {% if message.msg_poster.id == request.session.user_id %}
+            <form action="/wall/delete_msg" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name= "message_to_delete_id" value = "{{message.id}}">
+                <button id="dlt_but" type="submit">Delete this message</button>
+            </form>
+            {% endif %}
+            
+
+
+            {% for comment in message.comments.all %}
+            <p id="cmt_head">{{comment.cmt_poster.first_name}} {{comment.cmt_poster.last_name}} - {{comment.created_at}}</p>
+            <p id="cmt_body">{{comment.cmt_content}}</p>
+            {% endfor %}
+            <form action="/wall/add_comment" method="POST">
+                {% csrf_token %}
+                <p id="add_cmt_label">Post a comment</p>
+                <textarea id="cmt_input" name="cmt_content" required></textarea>
+                <input type="hidden" name="msg_to_delete_id" value="{{message.id}}">
+                <button id="cmt_but" type="submit">Post a comment</button>
+            </form>
+            {% endfor %}
+
+        </div>      <!--end msgs-->
+    </div>        <!--end wrapper-->
+</body>
+</html>
