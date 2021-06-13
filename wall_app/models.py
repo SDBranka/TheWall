@@ -31,13 +31,19 @@ class UserManager(models.Manager):
 
         EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
-        email_in_db = self.filter(email = postData['lemail'])
-        if not email_in_db:
-            errors['email'] = "This email is not registered"
         if len(postData['lemail']) < 2 or not EMAIL_REGEX.match(postData['lemail']):
             errors["email"] = "Please enter a valid email"
         if len(postData['lpassword']) < 8:
             errors["password"] = "Please enter a valid password"
+
+        email_in_db = self.filter(email = postData['lemail'])
+        if not email_in_db:
+            errors['email'] = "This email is not registered"
+        else:
+            user = User.objects.get(email=postData["lemail"])
+            pw_to_hash = postData["lpassword"]
+            if not bcrypt.checkpw(pw_to_hash.encode(), user.password.encode()):
+                errors['email'] = "Incorrect password entered"
         return errors
 
 

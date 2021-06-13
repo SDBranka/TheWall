@@ -38,32 +38,27 @@
         </div>      <!--end msg_form-->
         <div id="msgs">
             {% for message in all_msgs %}
-            <p id="msg_head">{{message.msg_poster.first_name}} {{message.msg_poster.last_name}} - {{message.created_at}}</p>
-            <p id="msg_body">{{message.msg_content}}</p>
-
-            {% if message.msg_poster.id == request.session.user_id %}
-            <form action="/wall/delete_msg" method="POST">
-                {% csrf_token %}
-                <input type="hidden" name= "message_to_delete_id" value = "{{message.id}}">
-                <button id="dlt_but" type="submit">Delete this message</button>
-            </form>
-            {% endif %}
-            
-
-
-            {% for comment in message.comments.all %}
-            <p id="cmt_head">{{comment.cmt_poster.first_name}} {{comment.cmt_poster.last_name}} - {{comment.created_at}}</p>
-            <p id="cmt_body">{{comment.cmt_content}}</p>
+                <p id="msg_head">{{message.msg_poster.first_name}} {{message.msg_poster.last_name}} - {{message.created_at}}</p>
+                <p id="msg_body">{{message.msg_content}}</p>
+                {% if message.msg_poster.id == request.session.user_id %}
+                    <form action="/wall/delete_msg" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name= "message_to_delete_id" value = "{{message.id}}">
+                        <button id="dlt_but" type="submit">Delete this message</button>
+                    </form>
+                {% endif %}
+                {% for comment in message.comments.all %}
+                    <p id="cmt_head">{{comment.cmt_poster.first_name}} {{comment.cmt_poster.last_name}} - {{comment.created_at}}</p>
+                    <p id="cmt_body">{{comment.cmt_content}}</p>
+                {% endfor %}
+                <form action="/wall/add_comment" method="POST">
+                    {% csrf_token %}
+                    <p id="add_cmt_label">Post a comment</p>
+                    <textarea id="cmt_input" name="cmt_content" required></textarea>
+                    <input type="hidden" name="message_id" value="{{message.id}}">
+                    <button id="cmt_but" type="submit">Post a comment</button>
+                </form>
             {% endfor %}
-            <form action="/wall/add_comment" method="POST">
-                {% csrf_token %}
-                <p id="add_cmt_label">Post a comment</p>
-                <textarea id="cmt_input" name="cmt_content" required></textarea>
-                <input type="hidden" name="msg_to_delete_id" value="{{message.id}}">
-                <button id="cmt_but" type="submit">Post a comment</button>
-            </form>
-            {% endfor %}
-
         </div>      <!--end msgs-->
     </div>        <!--end wrapper-->
 </body>

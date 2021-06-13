@@ -40,8 +40,8 @@
                 <h2>Login</h2>
                 <form action = "/login" method = "POST">
                     {% csrf_token %}
-                    <p>Email: <input id="lemail_input" type="text" name="lemail"></p>
-                    <p>Password: <input id="lpw_input" type="text" name="lpassword"></p>
+                    <p>Email: <input id="lemail_input" type="email" name="lemail" required></p>
+                    <p>Password: <input id="lpw_input" type="password" name="lpassword" required></p>
                     <button id="log_but" type="submit">Log In</button>
                 </form>
             </div>      <!--end login_form-->
